@@ -13,25 +13,25 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/edit_name_field"
+            android:id="@+id/name_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Item name"/>
 
         <EditText
-            android:id="@+id/edit_price_field"
+            android:id="@+id/price_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Item price"/>
 
         <EditText
-            android:id="@+id/edit_quantity_field"
+            android:id="@+id/quantity_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Item quantity"/>
 
         <EditText
-            android:id="@+id/edit_supplier_field"
+            android:id="@+id/supplier_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Supplier"/>

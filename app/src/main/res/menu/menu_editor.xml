@@ -6,4 +6,10 @@
         android:title="Delete"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/accept_button"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_done_black_24dp"
+        android:title="Accept" />
+
 </menu>

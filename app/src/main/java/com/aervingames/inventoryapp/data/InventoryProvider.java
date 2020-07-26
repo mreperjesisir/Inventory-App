@@ -3,6 +3,7 @@ package com.aervingames.inventoryapp.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -14,7 +15,18 @@ import androidx.annotation.Nullable;
 public class InventoryProvider extends ContentProvider {
 
     private static final String TAG = "InventoryProvider";
-    InventoryDbHelper mInventoryDbHelper;
+    private InventoryDbHelper mInventoryDbHelper;
+
+    private static final int ITEMS = 100;
+    private static final int ITEM_ID = 101;
+
+    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    static{
+        sUriMatcher.addURI(InventoryContract.InventoryEntry.CONTENT_AUTHORITY, InventoryContract.InventoryEntry.PATH_INVENTORY, ITEMS);
+        sUriMatcher.addURI(InventoryContract.InventoryEntry.CONTENT_AUTHORITY, InventoryContract.InventoryEntry.PATH_INVENTORY + "/#", ITEM_ID);
+    }
+
 
     @Override
     public boolean onCreate() {
@@ -29,24 +41,48 @@ public class InventoryProvider extends ContentProvider {
         SQLiteDatabase database = mInventoryDbHelper.getReadableDatabase();
 
         Cursor cursor = null;
+        final int match = sUriMatcher.match(uri);
 
-        cursor = database.query(InventoryContract.InventoryEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        switch (match){
+            case ITEMS:
+                cursor = database.query(InventoryContract.InventoryEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+                break;
+            case ITEM_ID:
+                selection = InventoryContract.InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(InventoryContract.InventoryEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+                break;
+            default: throw new IllegalArgumentException("Cannot query unknown uri " + uri);
+        }
+        cursor.setNotificationUri(getContext().getContentResolver(), InventoryContract.InventoryEntry.CONTENT_URI);
         return cursor;
+
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        final int match = sUriMatcher.match(uri);
+        switch (match){
+            case ITEMS:
+                return InventoryContract.InventoryEntry.CONTENT_LIST_TYPE;
+            case ITEM_ID:
+                return InventoryContract.InventoryEntry.CONTENT_ITEM_TYPE;
+            default: throw new IllegalArgumentException("Unknown uri " + uri + "with match " + match);
+        }
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
 
-        //TODO: Uri will need matching
+       final int match = sUriMatcher.match(uri);
 
-        return verifyThenInsert(uri, values);
+        switch (match){
+            case ITEMS:
+                return verifyThenInsert(uri, values);
+            default: throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
     }
 
     public Uri verifyThenInsert(Uri uri, ContentValues values){
@@ -72,11 +108,33 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        SQLiteDatabase db = mInventoryDbHelper.getWritableDatabase();
+        final int match = sUriMatcher.match(uri);
+
+        switch (match){
+            case ITEMS:
+                getContext().getContentResolver().notifyChange(InventoryContract.InventoryEntry.CONTENT_URI, null);
+                return db.delete(InventoryContract.InventoryEntry.TABLE_NAME, null, null);
+
+            case ITEM_ID:
+                selection = InventoryContract.InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                getContext().getContentResolver().notifyChange(InventoryContract.InventoryEntry.CONTENT_URI, null);
+                return db.delete(InventoryContract.InventoryEntry.TABLE_NAME, selection, selectionArgs);
+
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
+
+
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+
+        //TODO: create update method
+
         return 0;
     }
 }
