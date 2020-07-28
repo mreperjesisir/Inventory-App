@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -133,8 +134,45 @@ public class InventoryProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
 
-        //TODO: create update method
+        int match = sUriMatcher.match(uri);
 
-        return 0;
+        switch(match){
+            case ITEMS:
+                return verifyAndUpdate(uri, values, selection, selectionArgs);
+            case ITEM_ID:
+                selection = InventoryContract.InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return verifyAndUpdate(uri, values, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update not supported for " + uri);
+        }
     }
+
+    private int verifyAndUpdate(Uri uri, ContentValues values, String selection, String[] selectionArgs){
+
+        if (values.size()==0){
+            return 0;
+        }
+
+        if (values.getAsString(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME)==null){
+            throw new IllegalArgumentException("Item needs a name");
+        }
+
+        if (values.getAsString(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER)==null){
+            throw new IllegalArgumentException("Supplier must be specified");
+        }
+
+        if (values.getAsInteger(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE)==null){
+            throw new IllegalArgumentException("Item needs a price");
+        }
+
+        if (values.getAsInteger(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY)==null){
+            throw new IllegalArgumentException("Must set a quantity");
+        }
+
+        SQLiteDatabase db = mInventoryDbHelper.getWritableDatabase();
+        getContext().getContentResolver().notifyChange(InventoryContract.InventoryEntry.CONTENT_URI, null);
+        return db.update(InventoryContract.InventoryEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
 }

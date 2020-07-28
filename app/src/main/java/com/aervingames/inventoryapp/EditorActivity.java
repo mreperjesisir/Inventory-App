@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.aervingames.inventoryapp.data.InventoryContract;
 
@@ -46,24 +47,45 @@ public class EditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId()==R.id.accept_button){
-            verifyAndInsert();
-            finish();
+            if (verifyAndInsert()==1){
+                Toast.makeText(this,"Item added successfully",Toast.LENGTH_SHORT);
+                finish();
+            } else {
+                Toast.makeText(this, "Please fill in Name, Quantity, and Price fields", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void verifyAndInsert() {
+    /**
+     * Verifies data and notifies user if required fields are empty.
+     * @return 1 if all data was valid and the item was inserted to the
+     * database. Returns 0 if a required field is empty.
+     */
 
-        //TODO: Verify the data to make sure it's valid and not null
+    private int verifyAndInsert() {
 
-        ContentValues values = new ContentValues();
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME, mNameField.getText().toString());
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE, Integer.parseInt(mPriceField.getText().toString()));
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, Integer.parseInt(mQuantityField.getText().toString()));
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, mSupplierField.getText().toString());
+        int successOrFail = 0;
 
-        getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
+        String name = mNameField.getText().toString().trim();
+        String quantity = mQuantityField.getText().toString().trim();
+        String price = mPriceField.getText().toString().trim();
 
+        if ((!name.isEmpty() && name!=null) &&
+                (!quantity.isEmpty() && quantity!=null) &&
+                (!price.isEmpty() && price != null)){
+
+            ContentValues values = new ContentValues();
+            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME, mNameField.getText().toString());
+            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE, Integer.parseInt(mPriceField.getText().toString()));
+            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, Integer.parseInt(mQuantityField.getText().toString()));
+            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, mSupplierField.getText().toString());
+
+            successOrFail = 1;
+            getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
+        }
+        return successOrFail;
     }
 }
