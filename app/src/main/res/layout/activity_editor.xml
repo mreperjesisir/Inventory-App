@@ -10,37 +10,86 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <EditText
             android:id="@+id/name_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
             android:hint="Item name"/>
 
-        <EditText
-            android:id="@+id/price_field"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Item price"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
 
-        <EditText
-            android:id="@+id/quantity_field"
+            <ImageButton
+                android:id="@+id/item_price_minus"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_remove_black_24dp"/>
+
+            <EditText
+                android:id="@+id/price_field"
+                android:inputType="number"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Item price"/>
+            <ImageButton
+                android:id="@+id/item_price_plus"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_add_black_24dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Item quantity"/>
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/quantity_minus"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_remove_black_24dp" />
+
+            <EditText
+                android:id="@+id/quantity_field"
+                android:inputType="number"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:hint="Quantity"/>
+
+
+            <ImageButton
+                android:id="@+id/quantity_plus"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_add_black_24dp"/>
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/supplier_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Supplier"/>
+            android:layout_marginRight="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:hint="Supplier (optional)"/>
 
-        <Button
-            android:id="@+id/add_item_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add new item"/>
 
     </LinearLayout>
 

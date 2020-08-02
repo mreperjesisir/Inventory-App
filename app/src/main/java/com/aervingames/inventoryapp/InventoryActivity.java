@@ -7,14 +7,17 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,12 +49,17 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         });
 
         ListView catalog = findViewById(R.id.inventory_list_view);
-
-        //TODO: Set up an OnItemClickListener to open the
-        // EditorActivity to view details and update item info
-
         mAdapter = new InventoryCursorAdapter(this, null);
         catalog.setAdapter(mAdapter);
+        catalog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(InventoryActivity.this, EditorActivity.class);
+                Uri itemUri = ContentUris.withAppendedId(InventoryContract.InventoryEntry.CONTENT_URI, id);
+                intent.setData(itemUri);
+                startActivity(intent);
+            }
+        });
 
         getSupportLoaderManager().initLoader(0,null, (LoaderManager.LoaderCallbacks<Cursor>)this);
 
@@ -85,12 +93,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, "Walmart");
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, 3);
 
-
         getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values);
-
-        //SQLiteDatabase db = mInventoryDbHelper.getWritableDatabase();
-        //long newRowId = db.insert(InventoryContract.InventoryEntry.TABLE_NAME, null, values);
-        //getContentResolver().notifyChange(InventoryContract.InventoryEntry.CONTENT_URI, null);
     }
 
     public void deleteAll(){
