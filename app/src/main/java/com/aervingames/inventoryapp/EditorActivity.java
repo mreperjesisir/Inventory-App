@@ -14,7 +14,9 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -59,22 +61,59 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mSupplierField = findViewById(R.id.supplier_field);
         mEditViewUri = getIntent().getData();
 
-        //TODO: Fix issue with buttons: if I bring the counter to 1
-        // and disable the minus button,
-        // then I edit the text to a higher number,
-        // the minus button is still disabled.
-        //
-        // Also, when I enter 1 to the EditTextField manually,
-        // the minus button won't be disabled yet
+        mPriceField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (s.toString().equals("1")){
+                    mPriceMinus.setClickable(false);
+                } else {
+                    mPriceMinus.setClickable(true);
+                }
+                mItemHasChanged = true;
+            }
+        });
+        mQuantityField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (s.toString().equals("1")){
+                    mQuantityMinus.setClickable(false);
+                } else {
+                    mQuantityMinus.setClickable(true);
+                }
+                mItemHasChanged = true;
+            }
+        });
 
         mPricePlus = findViewById(R.id.item_price_plus);
         mPricePlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(mPriceField.getText())){
+                if (!TextUtils.isEmpty(mPriceField.getText())) {
                     int price = Integer.parseInt(mPriceField.getText().toString());
-                    mPriceField.setText(String.valueOf(price+1));
-                    if (!mPriceMinus.isClickable()){
+                    mPriceField.setText(String.valueOf(price + 1));
+                    if (!mPriceMinus.isClickable()) {
                         mPriceMinus.setClickable(true);
                     }
                 } else {
@@ -88,10 +127,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mQuantityPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(mQuantityField.getText())){
+                if (!TextUtils.isEmpty(mQuantityField.getText())) {
                     int quantity = Integer.parseInt(mQuantityField.getText().toString());
-                    mQuantityField.setText(String.valueOf(quantity+1));
-                    if (!mQuantityMinus.isClickable()){
+                    mQuantityField.setText(String.valueOf(quantity + 1));
+                    if (!mQuantityMinus.isClickable()) {
                         mQuantityMinus.setClickable(true);
                     }
                 } else {
@@ -106,9 +145,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mPriceField.getText()) &&
-                Integer.parseInt(mPriceField.getText().toString()) > 1){
+                        Integer.parseInt(mPriceField.getText().toString()) > 1) {
                     int price = Integer.parseInt(mPriceField.getText().toString());
-                    mPriceField.setText(String.valueOf(price-1));
+                    mPriceField.setText(String.valueOf(price - 1));
                 } else {
                     mPriceField.setText("1");
                     mPriceMinus.setClickable(false);
@@ -121,9 +160,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mQuantityField.getText()) &&
-                Integer.parseInt(mQuantityField.getText().toString()) > 1){
+                        Integer.parseInt(mQuantityField.getText().toString()) > 1) {
                     int quantity = Integer.parseInt(mQuantityField.getText().toString());
-                    mQuantityField.setText(String.valueOf(quantity-1));
+                    mQuantityField.setText(String.valueOf(quantity - 1));
                 } else {
                     mQuantityField.setText("1");
                     mQuantityMinus.setClickable(false);
@@ -132,8 +171,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         });
 
         mNameField.setOnTouchListener(mTouchListener);
-        mPriceField.setOnTouchListener(mTouchListener);
-        mQuantityField.setOnTouchListener(mTouchListener);
         mSupplierField.setOnTouchListener(mTouchListener);
 
         if (mEditViewUri == null) {
@@ -143,7 +180,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             this.setTitle("Edit item details");
             getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         }
-        //TODO: Review the design and get rid of the Add new item button
+        //TODO:
+        // 1. Review the design and add Text next to the + and - buttons,
+        // because the hint is the only thing indicating what each field is.
+        // 2. Put strings in a resource file
+        // 3. Pick a style and theme for UI elements
 
     }
 
@@ -157,15 +198,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu){
+    public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if (mEditViewUri == null){
+        if (mEditViewUri == null) {
             MenuItem menuItem = menu.findItem(R.id.delete_item);
             menuItem.setVisible(false);
         }
         return true;
     }
-
 
 
     @Override
@@ -177,7 +217,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.accept_button:
                 if (mEditViewUri == null) {
                     boolean success = verifyInput();
@@ -204,13 +244,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 }
                 return true;
             case R.id.delete_item:
-                if (mEditViewUri != null){
+                if (mEditViewUri != null) {
                     showDeleteConfirmationDialog();
                 }
                 return true;
             case android.R.id.home:
-                if (!mItemHasChanged){
+                if (!mItemHasChanged) {
                     NavUtils.navigateUpFromSameTask(this);
+                    return true;
                 } else {
                     showUnsavedChangesDialog(new DialogInterface.OnClickListener() {
                         @Override
@@ -218,14 +259,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                             NavUtils.navigateUpFromSameTask(EditorActivity.this);
                         }
                     });
+                    return true;
                 }
         }
         return super.onOptionsItemSelected(item);
     }
 
     /**
-
-     *
      * @return Uri of inserted row as a String
      */
 
@@ -237,7 +277,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME, mNameField.getText().toString());
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE, Integer.parseInt(mPriceField.getText().toString()));
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, Integer.parseInt(mQuantityField.getText().toString()));
-        if (TextUtils.isEmpty(mSupplierField.getText().toString())){
+        if (TextUtils.isEmpty(mSupplierField.getText().toString())) {
             values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, "Unknown supplier");
         } else {
             values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, mSupplierField.getText().toString());
@@ -252,7 +292,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME, mNameField.getText().toString());
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE, Integer.parseInt(mPriceField.getText().toString()));
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, Integer.parseInt(mQuantityField.getText().toString()));
-        if (TextUtils.isEmpty(mSupplierField.getText().toString())){
+        if (TextUtils.isEmpty(mSupplierField.getText().toString())) {
             values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, "Unknown supplier");
         } else {
             values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, mSupplierField.getText().toString());
@@ -282,15 +322,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         return success;
     }
 
-    private void deleteItem(){
-        if (mEditViewUri != null){
+    private void deleteItem() {
+        if (mEditViewUri != null) {
             getContentResolver().delete(mEditViewUri, null, null);
             Toast.makeText(this, "Item deleted successfully", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
-    private void showDeleteConfirmationDialog(){
+    private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to delete this item?");
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -302,7 +342,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (dialog!=null){
+                if (dialog != null) {
                     dialog.dismiss();
                 }
             }
@@ -311,14 +351,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         dialog.show();
     }
 
-    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonListener){
+    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Do you want to discard unsaved changes?");
         builder.setPositiveButton("Discard", discardButtonListener);
         builder.setNegativeButton("Keep Editing", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (dialog!=null){
+                if (dialog != null) {
                     dialog.dismiss();
                 }
             }
@@ -354,6 +394,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mPriceField.setText(data.getString(priceColumnIndex));
             mQuantityField.setText(data.getString(quantityColumnIndex));
             mSupplierField.setText(data.getString(supplierColumnIndex));
+
+            // Must set mItemHasChanged to false here because the when
+            // the loader finishes setting the fields it will trigger
+            // afterTextChanged, which will eventually lead to
+            // showUnsavedChangesDialog triggering even when there were no changes
+            // by the user
+
+            mItemHasChanged = false;
         }
 
     }
