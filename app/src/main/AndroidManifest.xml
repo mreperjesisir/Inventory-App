@@ -16,7 +16,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".EditorActivity"/>
         </activity>
-        <activity android:name=".InventoryActivity">
+        <activity android:name=".InventoryActivity"
+            android:label="Inventory">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,7 +18,8 @@
             android:layout_margin="4dp"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -26,16 +28,45 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:padding="8dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="20sp"
+                android:gravity="center"
+                tools:text="Product name"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="4dp"/>
+
+            <View
+                android:id="@+id/divider_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent"
+                android:layout_marginHorizontal="50dp"/>
 
             <TextView
                 android:id="@+id/supplier_text"
                 android:layout_width="match_parent"
                 android:padding="8dp"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:alpha="0.6"
+                tools:text="Tesco Family"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="4dp"/>
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/number_in_stock"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            tools:text="125 in stock"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:padding="8dp"
+            android:layout_margin="4dp"/>
 
     </LinearLayout>
 

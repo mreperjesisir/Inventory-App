@@ -26,14 +26,18 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
         TextView name = view.findViewById(R.id.title_text);
         TextView supplier = view.findViewById(R.id.supplier_text);
+        TextView piecesInStock = view.findViewById(R.id.number_in_stock);
 
         int nameIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME);
         int supplierIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER);
+        int inStockIndex = cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY);
 
         String itemNameText = cursor.getString(nameIndex);
         String supplierText = cursor.getString(supplierIndex);
+        String inStock = String.valueOf(cursor.getInt(inStockIndex)) + "\nin stock";
 
         name.setText(itemNameText);
         supplier.setText(supplierText);
+        piecesInStock.setText(inStock);
     }
 }

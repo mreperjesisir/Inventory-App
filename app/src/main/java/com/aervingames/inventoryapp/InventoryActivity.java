@@ -107,6 +107,7 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         String[] projection = {
                 InventoryContract.InventoryEntry._ID,
+                InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY,
                 InventoryContract.InventoryEntry.COLUMN_ITEM_NAME,
                 InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER
         };
