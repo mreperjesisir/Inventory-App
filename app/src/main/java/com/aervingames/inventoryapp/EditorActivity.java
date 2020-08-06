@@ -75,7 +75,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void afterTextChanged(Editable s) {
 
-                if (s.toString().equals("1")){
+                if (s.toString().equals("1")) {
                     mPriceMinus.setClickable(false);
                 } else {
                     mPriceMinus.setClickable(true);
@@ -97,7 +97,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             @Override
             public void afterTextChanged(Editable s) {
 
-                if (s.toString().equals("1")){
+                if (s.toString().equals("1")) {
                     mQuantityMinus.setClickable(false);
                 } else {
                     mQuantityMinus.setClickable(true);
@@ -180,12 +180,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             this.setTitle("Edit item details");
             getSupportLoaderManager().initLoader(LOADER_ID, null, this);
         }
-        //TODO:
-        // 1. Review the design and add Text next to the + and - buttons,
-        // because the hint is the only thing indicating what each field is.
-        // 2. Put strings in a resource file
-        // 3. Pick a style and theme for UI elements
-
     }
 
     @Override
@@ -271,23 +265,19 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private String insert() {
 
-        //TODO: Create separate helper method to create the ContentValues object
-
-        ContentValues values = new ContentValues();
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME, mNameField.getText().toString());
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE, Integer.parseInt(mPriceField.getText().toString()));
-        values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_QUANTITY, Integer.parseInt(mQuantityField.getText().toString()));
-        if (TextUtils.isEmpty(mSupplierField.getText().toString())) {
-            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, "Unknown supplier");
-        } else {
-            values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, mSupplierField.getText().toString());
-        }
+        ContentValues values = getContentValues();
 
         return getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI, values).toString();
     }
 
     private int update() {
 
+        ContentValues values = getContentValues();
+
+        return getContentResolver().update(mEditViewUri, values, null, null);
+    }
+
+    private ContentValues getContentValues() {
         ContentValues values = new ContentValues();
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_NAME, mNameField.getText().toString());
         values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_PRICE, Integer.parseInt(mPriceField.getText().toString()));
@@ -297,8 +287,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         } else {
             values.put(InventoryContract.InventoryEntry.COLUMN_ITEM_SUPPLIER, mSupplierField.getText().toString());
         }
-
-        return getContentResolver().update(mEditViewUri, values, null, null);
+        return values;
     }
 
     /**
@@ -395,7 +384,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mQuantityField.setText(data.getString(quantityColumnIndex));
             mSupplierField.setText(data.getString(supplierColumnIndex));
 
-            // Must set mItemHasChanged to false here because the when
+            // Note to self: must set mItemHasChanged to false here because the when
             // the loader finishes setting the fields it will trigger
             // afterTextChanged, which will eventually lead to
             // showUnsavedChangesDialog triggering even when there were no changes
